@@ -1,0 +1,50 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+	Name = "Garden Status Panel",
+	LoadingTitle = "Loading...",
+	LoadingSubtitle = "Live Monitor",
+	ConfigurationSaving = { Enabled = false }
+})
+
+local StatusTab = Window:CreateTab("Status", 4483362458)
+
+local statusLabel = StatusTab:CreateLabel("Status: Starting...")
+
+local function setStatus(text)
+	statusLabel:Set(text)
+	print("STATUS:", text)
+end
+
+task.spawn(function()
+
+	local player = game.Players.LocalPlayer
+	local targetName = player.Name
+
+	task.wait(2)
+
+	local foundGarden = "Unknown"
+
+	for _, obj in pairs(workspace:GetDescendants()) do
+
+		if obj:IsA("TextLabel") then
+
+			local txt = tostring(obj.Text)
+
+			if string.find(txt, targetName) then
+
+				local garden = obj:FindFirstAncestorWhichIsA("Model")
+				if garden then
+					foundGarden = garden.Name
+					break
+				end
+			end
+		end
+	end
+
+	if foundGarden ~= "Unknown" then
+		setStatus("🌿 Your Garden: " .. foundGarden)
+	else
+		setStatus("⚠️ Garden Not Found")
+	end
+end)
