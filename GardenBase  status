@@ -1,0 +1,20 @@
+local player = game.Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local hrp = char:WaitForChild("HumanoidRootPart")
+
+-- teleport first
+game:GetService("ReplicatedStorage"):WaitForChild("TeleportEvent"):FireServer("Garden")
+
+task.wait(2)
+
+-- NOW JUST WORK AROUND PLAYER
+for _, obj in pairs(workspace:GetDescendants()) do
+	if obj.Name == "PlantVase" then
+
+		local pos = obj:IsA("Model") and obj:GetPivot().Position or obj.Position
+
+		if pos and (hrp.Position - pos).Magnitude < 80 then
+			print("FOUND PLANT NEAR YOU:", obj:GetFullName())
+		end
+	end
+end
