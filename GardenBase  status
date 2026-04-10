@@ -1,20 +1,43 @@
 local player = game.Players.LocalPlayer
-local char = player.Character or player.CharacterAdded:Wait()
-local hrp = char:WaitForChild("HumanoidRootPart")
+local targetName = player.Name
 
--- teleport first
-game:GetService("ReplicatedStorage"):WaitForChild("TeleportEvent"):FireServer("Garden")
+print("=== GARDEN DETECTION TEST START ===")
+print("Player:", targetName)
 
 task.wait(2)
 
--- NOW JUST WORK AROUND PLAYER
+local foundGarden = nil
+
 for _, obj in pairs(workspace:GetDescendants()) do
-	if obj.Name == "PlantVase" then
 
-		local pos = obj:IsA("Model") and obj:GetPivot().Position or obj.Position
+	if obj:IsA("TextLabel") then
 
-		if pos and (hrp.Position - pos).Magnitude < 80 then
-			print("FOUND PLANT NEAR YOU:", obj:GetFullName())
+		local txt = tostring(obj.Text)
+
+		if string.find(txt, targetName) then
+
+			local parent = obj.Parent
+
+			while parent do
+
+				if parent.Name and string.find(parent.Name, "GardenBase") then
+					foundGarden = parent.Name
+					break
+				end
+				parent = parent.Parent
+			end
+
+			if foundGarden then
+				break
+			end
 		end
 	end
 end
+
+if foundGarden then
+	print("🌿 YOUR GARDEN IS:", foundGarden)
+else
+	print("⚠️ GARDEN NOT FOUND")
+end
+
+print("=== TEST DONE ===")
