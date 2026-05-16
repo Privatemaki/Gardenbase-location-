@@ -1,0 +1,143 @@
+local Players game: GetService("Players")
+
+local player Players. LocalPlayer
+
+local playerGui player: WaitForChild("PlayerGui")
+
+local screenGui Instance.new("ScreenGui")
+
+screenGui.Name "InstantPromptGUI"
+
+screenGui. ResetOnSpawn = false
+
+screenGui.Parent playerGui
+
+local frame Instance.new("Frame")
+
+frame.Size UDim2.new(0, 300, 0, 150)
+
+frame.Position UDim2.new(0.3, 0, 0.3, 0)
+
+frame.BackgroundColor3 Color3.fromRGB(35, 35, 35)
+
+frame.BorderSizePixel 0
+
+frame.Active = true
+
+frame.Draggable = true
+
+frame.Parent screenGui
+
+local title Instance.new("TextLabel")
+
+title.Size = UDim2.new(1, 30, 0, 30)
+
+title.Position UDim2.new(0, 0, 0, 0)
+
+title.BackgroundColor3 Color3.fromRGB(25, 25, 25)
+
+title.Text = "Instant Prompt GUI"
+
+title.TextColor3 Color3.fromRGB(255, 255, 255)
+
+title.TextScaled = true
+
+title.FontEnum.Font.SourceSans Bold
+
+title.Parent frame
+
+local closeBtn Instance.new("TextButton")
+
+closeBtn.Size UDim2.new(0, 30, 0, 30)
+
+closeBtn.Position UDim2.new(1, 30, 0, 0)
+
+closeBtn.BackgroundColor3 Color3.fromRGB(170, 0, 0)
+
+closeBtn.Text = "X"
+
+closeBtn.TextColor3 Color3.fromRGB(255, 255, 255)
+
+closeBtn.Font Enum.Font.SourceSansBold
+
+closeBtn.TextScaled = true
+
+closeBtn.Parent frame
+
+local toggleBtn Instance.new("TextButton")
+
+toggleBtn.Size UDim2.new(0.8, 0, 0, 40)
+
+toggleBtn.Position UDim2.new(0.1, 0, 0.5, -20)
+
+toggleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+
+toggleBtn.Text "Enable Instant Prompt"
+
+toggleBtn.TextColor3 Color3.fromRGB(255, 255, 255)
+
+toggleBtn.Font Enum.Font.SourceSans Bold
+
+toggleBtn.TextScaled = true
+
+toggleBtn.Parent frame
+
+local enabled = false
+
+local connection
+
+local function setInstant(prompt)
+
+end
+
+prompt.HoldDuration = 0
+
+prompt.RequiresLineOfSight = false
+
+toggleBtn.MouseButton1Click: Connect(function()
+
+enabled = not enabled
+
+if enabled then
+
+toggleBtn.Text "Disable Instant Prompt"
+
+for prompt in ipairs(game: GetDescendants()) do
+
+if prompt: ISA("ProximityPrompt") then
+
+end
+
+end
+
+setInstant(prompt)
+
+connection game. DescendantAdded: Connect(function(obj)
+
+if obj: IsA("ProximityPrompt") then
+
+end
+
+end)
+
+else
+
+setInstant(obj)
+
+toggleBtn.Text = "Enable Instant Prompt"
+
+connection: Disconnect()
+
+end
+
+end
+
+end)
+
+if connection then connection = nil
+
+closeBtn.MouseButton1Click: Connect(function()
+
+screenGui: Destroy()
+
+end)
