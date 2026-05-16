@@ -1,0 +1,56 @@
+local AutoBuyTab = Window:CreateTab("Auto Buy All", 4483362458)
+
+local function buyItem(itemName)
+   local args = {
+      itemName
+   }
+
+   game:GetService("ReplicatedStorage")
+      :WaitForChild("Events")
+      :WaitForChild("BuyGearStock")
+      :FireServer(unpack(args))
+end
+
+local items = {
+   "Watering Bucket",
+   "Reclaimer",
+   "Nametag",
+   "Harvest Tool",
+   "Quantum Sprinkler",
+   "Elite Sprinkler",
+   "Turbo Sprinkler",
+   "Sprinkler",
+   "Trowel"
+}
+
+local autoBuyAll = false
+
+AutoBuyTab:CreateToggle({
+   Name = "Auto Buy All",
+   CurrentValue = false,
+   Flag = "AutoBuyAll",
+   Callback = function(Value)
+      autoBuyAll = Value
+   end,
+})
+
+task.spawn(function()
+   while true do
+      if autoBuyAll then
+
+         for _,item in ipairs(items) do
+
+            for i = 1,5 do
+               pcall(function()
+                  buyItem(item)
+               end)
+            end
+
+            task.wait(0.05)
+         end
+
+      end
+
+      task.wait(0.1)
+   end
+end)
