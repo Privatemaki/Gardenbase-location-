@@ -1,0 +1,23 @@
+local function clearPlants()
+    local farmFolder = workspace:FindFirstChild("Farm")
+    if not farmFolder then return end
+
+    local count = 0
+
+    for _,farm in ipairs(farmFolder:GetChildren()) do
+        local main = farm:FindFirstChild("Main")
+
+        if main then
+            local plants = main:FindFirstChild("Plant_Models")
+
+            if plants then
+                plants:Destroy()
+                count += 1
+            end
+        end
+    end
+
+    print("Plant_Models removed:", count)
+end
+
+clearPlants()
