@@ -1,0 +1,9 @@
+while task.wait(0.2) do
+    for _, v in ipairs(workspace.Farm:GetDescendants()) do
+        if v:IsA("ProximityPrompt") then
+            pcall(function()
+                fireproximityprompt(v)
+            end)
+        end
+    end
+end
