@@ -92,10 +92,16 @@ PlayerTab:CreateDropdown({
    Flag = "FruitDropdown",
 
    Callback = function(Option)
-      selectedFruit = Option
+
+      if typeof(Option) == "table" then
+         selectedFruit = Option[1]
+      else
+         selectedFruit = Option
+      end
+
+      print("Selected:", selectedFruit)
    end,
 })
-
 -- TOGGLE
 PlayerTab:CreateToggle({
    Name = "Auto Harvest",
@@ -120,7 +126,7 @@ task.spawn(function()
 
                     local full = v:GetFullName()
 
-                    if string.find(full, selectedFruit) then
+                    if string.find(full, tostring(selectedFruit)) then
 
                         pcall(function()
                             fireproximityprompt(v)
