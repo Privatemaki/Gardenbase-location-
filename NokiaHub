@@ -55,13 +55,24 @@ local autoHarvest = false
 local function refreshFruits()
     fruitList = {}
 
-    for _, obj in ipairs(workspace.Farm:GetDescendants()) do
-        if obj:IsA("Model") then
+    for _, farm in ipairs(workspace.Farm:GetChildren()) do
 
-            if not table.find(fruitList, obj.Name) then
-                table.insert(fruitList, obj.Name)
+        local main = farm:FindFirstChild("Main")
+
+        if main then
+
+            local plants = main:FindFirstChild("Plant_Models")
+
+            if plants then
+
+                for _, fruit in ipairs(plants:GetChildren()) do
+
+                    if not table.find(fruitList, fruit.Name) then
+                        table.insert(fruitList, fruit.Name)
+                    end
+
+                end
             end
-
         end
     end
 end
