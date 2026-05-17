@@ -102,6 +102,7 @@ PlayerTab:CreateDropdown({
       print("Selected:", selectedFruit)
    end,
 })
+
 -- TOGGLE
 PlayerTab:CreateToggle({
    Name = "Auto Harvest",
@@ -138,6 +139,7 @@ task.spawn(function()
         end
     end
 end)
+
 
 -- 🔥 Instant Prompt (ADD ONLY - NO EDITS)
 
