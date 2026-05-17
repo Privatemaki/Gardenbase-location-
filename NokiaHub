@@ -84,22 +84,17 @@ PlayerTab:CreateButton({
 })
 
 -- DROPDOWN
+local selectedFruits = {}
+
 PlayerTab:CreateDropdown({
-   Name = "Select Fruit",
+   Name = "Select Fruits",
    Options = fruitList,
    CurrentOption = {},
-   MultipleOptions = false,
+   MultipleOptions = true,
    Flag = "FruitDropdown",
 
-   Callback = function(Option)
-
-      if typeof(Option) == "table" then
-         selectedFruit = Option[1]
-      else
-         selectedFruit = Option
-      end
-
-      print("Selected:", selectedFruit)
+   Callback = function(Options)
+      selectedFruits = Options
    end,
 })
 
@@ -119,7 +114,7 @@ task.spawn(function()
     while true do
         task.wait(0.2)
 
-        if autoHarvest and selectedFruit then
+        if autoHarvest then
 
             for _, v in ipairs(workspace.Farm:GetDescendants()) do
 
@@ -127,12 +122,16 @@ task.spawn(function()
 
                     local full = v:GetFullName()
 
-                    if string.find(full, tostring(selectedFruit)) then
+                    for _, fruit in ipairs(selectedFruits) do
 
-                        pcall(function()
-                            fireproximityprompt(v)
-                        end)
+                        if string.find(full, tostring(fruit)) then
 
+                            pcall(function()
+                                fireproximityprompt(v)
+                            end)
+
+                            break
+                        end
                     end
                 end
             end
