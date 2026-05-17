@@ -123,7 +123,7 @@ PlayerTab:CreateToggle({
 -- LOOP
 task.spawn(function()
     while true do
-        task.wait(0.2)
+        task.wait(0.40)
 
         if autoHarvest then
 
