@@ -355,18 +355,31 @@ task.spawn(function()
         local farmers = workspace:FindFirstChild("Farmers")
 
         if farmers then
-
             for _, npc in ipairs(farmers:GetChildren()) do
 
-                local hrp = npc:FindFirstChild("HumanoidRootPart")
+                local prompt = npc:FindFirstChildWhichIsA("ProximityPrompt", true)
 
-                if hrp then
+                if prompt then
 
-                    local prompt = hrp:FindFirstChildOfClass("ProximityPrompt")
+                    local text = string.lower(prompt.ActionText or "")
 
-                    if prompt then
+                    for rarity, enabled in pairs(rarityTargets) do
 
-                        local lowerName = string.lower(npc.Name)
+                        if enabled and string.find(text, rarity) then
+
+                            pcall(function()
+                                fireproximityprompt(prompt)
+                            end)
+
+                            task.wait(0.15)
+                            break
+                        end
+                    end
+                end
+            end
+        end
+    end
+end)
 
                         ------------------------------------------------
                         -- LUCKY BLOCK FILTER
