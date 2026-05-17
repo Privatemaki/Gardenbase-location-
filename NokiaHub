@@ -1,0 +1,265 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "Player Hub",
+   LoadingTitle = "Loading...",
+   LoadingSubtitle = "by You",
+   ConfigurationSaving = {
+      Enabled = false
+   }
+})
+
+local PlayerTab = Window:CreateTab("Player", 4483362458)
+
+-- Infinite Jump
+local infJump = false
+
+PlayerTab:CreateToggle({
+   Name = "Infinite Jump",
+   CurrentValue = false,
+   Flag = "InfJump",
+   Callback = function(Value)
+      infJump = Value
+   end,
+})
+
+game:GetService("UserInputService").JumpRequest:Connect(function()
+   if infJump then
+      local hum = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+      if hum then
+         hum:ChangeState(Enum.HumanoidStateType.Jumping)
+      end
+   end
+end)
+
+-- WalkSpeed
+PlayerTab:CreateSlider({
+   Name = "WalkSpeed",
+   Range = {16, 100},
+   Increment = 1,
+   CurrentValue = 16,
+   Flag = "Speed",
+   Callback = function(Value)
+      local hum = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+      if hum then
+         hum.WalkSpeed = Value
+      end
+   end,
+})
+
+local selectedFruit = nil
+local fruitList = {}
+local autoHarvest = false
+
+-- SCAN FRUITS
+local function refreshFruits()
+    fruitList = {}
+
+    for _, obj in ipairs(workspace.Farm:GetDescendants()) do
+        if obj:IsA("Model") then
+
+            if not table.find(fruitList, obj.Name) then
+                table.insert(fruitList, obj.Name)
+            end
+
+        end
+    end
+end
+
+-- FIRST SCAN
+refreshFruits()
+
+-- REFRESH BUTTON
+PlayerTab:CreateButton({
+   Name = "Refresh Fruits",
+   Callback = function()
+      refreshFruits()
+
+      Rayfield:Notify({
+         Title = "Fruit Scanner",
+         Content = "Fruit list refreshed!",
+         Duration = 3,
+      })
+   end,
+})
+
+-- DROPDOWN
+PlayerTab:CreateDropdown({
+   Name = "Select Fruit",
+   Options = fruitList,
+   CurrentOption = {},
+   MultipleOptions = false,
+   Flag = "FruitDropdown",
+
+   Callback = function(Option)
+      selectedFruit = Option
+   end,
+})
+
+-- TOGGLE
+PlayerTab:CreateToggle({
+   Name = "Auto Harvest",
+   CurrentValue = false,
+   Flag = "AutoHarvest",
+
+   Callback = function(Value)
+      autoHarvest = Value
+   end,
+})
+
+-- LOOP
+task.spawn(function()
+    while true do
+        task.wait(0.2)
+
+        if autoHarvest and selectedFruit then
+
+            for _, v in ipairs(workspace.Farm:GetDescendants()) do
+
+                if v:IsA("ProximityPrompt") then
+
+                    local full = v:GetFullName()
+
+                    if string.find(full, selectedFruit) then
+
+                        pcall(function()
+                            fireproximityprompt(v)
+                        end)
+
+                    end
+                end
+            end
+        end
+    end
+end)
+
+-- 🔥 Instant Prompt (ADD ONLY - NO EDITS)
+
+local promptConnections = {}
+
+local function applyPrompt(obj)
+   if obj:IsA("ProximityPrompt") then
+      obj.HoldDuration = 0
+      obj.RequiresLineOfSight = false
+   end
+end
+
+local function enablePrompt()
+   for _, obj in ipairs(game:GetDescendants()) do
+      applyPrompt(obj)
+   end
+
+   table.insert(promptConnections,
+      game.DescendantAdded:Connect(function(obj)
+         applyPrompt(obj)
+      end)
+   )
+end
+
+local function disablePrompt()
+   for _, c in ipairs(promptConnections) do
+      c:Disconnect()
+   end
+   promptConnections = {}
+end
+
+PlayerTab:CreateToggle({
+   Name = "Instant Prompt",
+   CurrentValue = false,
+   Flag = "InstantPromptToggle",
+   Callback = function(Value)
+      if Value then
+         enablePrompt()
+      else
+         disablePrompt()
+      end
+   end,
+})
+
+-- 🔥 ANTI LAG BUTTON (ADDED)
+PlayerTab:CreateButton({
+   Name = "Anti Lag (Plants Cleaner)",
+   Callback = function()
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/Privatemaki/Gardenbase-location-/refs/heads/main/anti%20lag"))()
+   end,
+})
+
+----------------------------------------------------------------
+-- AUTO BUY SYSTEM
+----------------------------------------------------------------
+
+local AutoBuyTab = Window:CreateTab("Auto Buy", 4483362458)
+
+local function buyItem(itemName)
+   local args = { itemName }
+
+   game:GetService("ReplicatedStorage")
+      :WaitForChild("Events")
+      :WaitForChild("BuyGearStock")
+      :FireServer(unpack(args))
+end
+
+local items = {
+   "Watering Bucket",
+   "Reclaimer",
+   "Nametag",
+   "Harvest Tool",
+   "Quantum Sprinkler",
+   "Elite Sprinkler",
+   "Turbo Sprinkler",
+   "Sprinkler",
+   "Trowel"
+}
+
+local autoBuyAll = false
+
+AutoBuyTab:CreateToggle({
+   Name = "Auto Buy All",
+   CurrentValue = false,
+   Flag = "AutoBuyAll",
+   Callback = function(Value)
+      autoBuyAll = Value
+   end,
+})
+
+task.spawn(function()
+   while true do
+      if autoBuyAll then
+         for _,item in ipairs(items) do
+            for i = 1,5 do
+               pcall(function()
+                  buyItem(item)
+               end)
+            end
+            task.wait(0.05)
+         end
+      end
+      task.wait(0.1)
+   end
+end)
+
+for _,item in ipairs(items) do
+   local enabled = false
+
+   AutoBuyTab:CreateToggle({
+      Name = item,
+      CurrentValue = false,
+      Flag = item,
+      Callback = function(Value)
+         enabled = Value
+      end,
+   })
+
+   task.spawn(function()
+      while true do
+         if enabled then
+            for i = 1,5 do
+               pcall(function()
+                  buyItem(item)
+               end)
+            end
+         end
+         task.wait(0.1)
+      end
+   end)
+end
